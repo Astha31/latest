@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="home-card">
+    <div class="hero-copy">
+        <h1>Willkommen bei Rätsel Power!</h1>
+        <p>Lerne Flask, indem du ein buntes Wort-Rätsel-Spiel spielst. Baue Selbstvertrauen auf, löse Rätsel und habe Spaß!</p>
+        <a class="button big-button" href="/game">Spiel starten</a>
+    </div>
+    <div class="hero-image">
+        <div class="circle glow"></div>
+        <div class="puzzle-cloud">
+            <span>STERN</span>
+            <span>REGEN</span>
+            <span>SPIEL</span>
+        </div>
+    </div>
+</section>
+<section class="info-grid">
+    <div class="info-card">
+        <h2>Einfach zu lernen</h2>
+        <p>Dieses Projekt verwendet Flask-Routen, Templates und einfachen Code, damit Anfänger verstehen, wie Web-Apps funktionieren.</p>
+    </div>
+    <div class="info-card">
+        <h2>Helles Design</h2>
+        <p>Bunte Knöpfe, Animationen und freundliches Layout machen das Spiel für Kinder aufregend.</p>
+    </div>
+    <div class="info-card">
+        <h2>Spielen & Wiederholen</h2>
+        <p>Versuche es nochmal mit dem Neustart-Knopf, zähle deine Züge und renne gegen die Zeit, um zu gewinnen.</p>
+    </div>
+</section>
+{% endblock %}

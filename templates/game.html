@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="game-shell">
+    <div class="score-panel">
+        <div class="status-box">
+            <h2>Punkte</h2>
+            <span id="score">0</span>
+        </div>
+        <div class="status-box">
+            <h2>Timer</h2>
+            <span id="timer">90</span>s
+        </div>
+        <div class="status-box">
+            <h2>Züge</h2>
+            <span id="moves">0</span>
+        </div>
+    </div>
+
+    <div class="puzzle-card">
+        <div class="puzzle-header">
+            <h1>Wort-Rätsel</h1>
+            <p>Verwende die Buchstaben, um das richtige Wort zu bilden.</p>
+        </div>
+        <div class="puzzle-question">
+            <h2 id="hint-text">Hint goes here</h2>
+            <div class="scrambled-word" id="scrambled-word">RATS</div>
+        </div>
+        <div class="input-row">
+            <input id="answer-input" type="text" maxlength="10" placeholder="Gib deine Antwort ein" />
+            <button class="button" id="submit-button">Überprüfen</button>
+        </div>
+        <p class="small-note">Du kannst auch Enter drücken, nachdem du deine Antwort eingegeben hast.</p>
+        <div class="game-message" id="game-message">Löse vier Wörter, bevor die Zeit abläuft!</div>
+        <div class="action-row">
+            <button class="button secondary" id="restart-button">Neustart</button>
+        </div>
+    </div>
+</section>
+
+<script>
+    const puzzleData = {{ puzzles|tojson }};
+</script>
+{% endblock %}
