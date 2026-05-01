@@ -20,6 +20,11 @@ def game():
     ]
     return render_template('game.html', puzzles=puzzles)
 
+# Block puzzle game page route: a fun block-shifting puzzle game.
+@app.route('/block-puzzle')
+def block_puzzle():
+    return render_template('block-puzzle.html')
+
 # Run the app when this file is executed directly.
 if __name__ == '__main__':
     app.run(debug=True)
