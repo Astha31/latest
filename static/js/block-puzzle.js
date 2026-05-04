@@ -1,9 +1,22 @@
 // Block Puzzle Game Logic - Tetris-style with falling blocks and shifting mechanics
 // Players move and rotate blocks to form complete rows and clear them
+// Mobile/Tablet compatible with touch controls
 
 const GRID_WIDTH = 6;
 const GRID_HEIGHT = 10;
-const CELL_SIZE = 40;
+let CELL_SIZE = 40;
+
+// Responsive cell size based on screen width
+function updateCellSize() {
+    const screenWidth = window.innerWidth;
+    if (screenWidth < 480) {
+        CELL_SIZE = 30;
+    } else if (screenWidth < 768) {
+        CELL_SIZE = 35;
+    } else {
+        CELL_SIZE = 40;
+    }
+}
 
 // Game state
 let grid = [];
@@ -15,6 +28,11 @@ let intervalId = null;
 let gameLoopId = null;
 let currentBlock = null;
 let nextBlock = null;
+
+// Touch tracking
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartTime = 0;
 
 // Tetris block shapes (Tetrominoes) - as arrays of [row, col] offsets
 const BLOCK_SHAPES = {
@@ -40,6 +58,7 @@ const nextBlocksDisplay = document.getElementById('next-blocks');
 
 // Initialize the game
 function initGame() {
+    updateCellSize();
     grid = Array(GRID_HEIGHT).fill().map(() => Array(GRID_WIDTH).fill(null));
     score = 0;
     linesCleared = 0;
@@ -51,7 +70,7 @@ function initGame() {
     updateDisplay();
     startTimer();
     startGameLoop();
-    setMessage('Benutze Pfeiltasten zum Verschieben! Drücke Leertaste zum Drehen!');
+    setMessage('Pfeiltasten oder Swipe zum Verschieben! Tippen oben zum Drehen!');
 }
 
 // Spawn a new falling block
@@ -363,9 +382,87 @@ function handleKeyPress(e) {
     }
 }
 
+// Touch controls for mobile/tablet
+function handleTouchStart(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+}
+
+function handleTouchEnd(e) {
+    if (gameOver) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndTime = Date.now();
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    const timeDiff = touchEndTime - touchStartTime;
+    
+    // Swipe detection
+    const minSwipeDistance = 30;
+    const maxSwipeTime = 500;
+    
+    if (Math.abs(diffX) > minSwipeDistance && timeDiff < maxSwipeTime) {
+        // Horizontal swipe
+        if (diffX > 0) {
+            moveRight();
+        } else {
+            moveLeft();
+        }
+    } else if (Math.abs(diffY) > minSwipeDistance && timeDiff < maxSwipeTime) {
+        // Vertical swipe
+        if (diffY > 0) {
+            moveDown();
+        }
+    }
+}
+
+// Tap to rotate (tap near top of screen)
+function handleTap(e) {
+    if (gameOver) return;
+    
+    const rect = gameGrid.getBoundingClientRect();
+    const tapY = e.touches[0].clientY - rect.top;
+    
+    // Tap in upper third of grid = rotate
+    if (tapY < rect.height / 3) {
+        rotateBlock();
+    }
+}
+
 // Event listeners
 restartButton.addEventListener('click', resetGame);
 document.addEventListener('keydown', handleKeyPress);
+
+// Touch event listeners for mobile/tablet
+if (gameGrid) {
+    gameGrid.addEventListener('touchstart', handleTouchStart, false);
+    gameGrid.addEventListener('touchend', handleTouchEnd, false);
+    gameGrid.addEventListener('touchstart', handleTap, false);
+}
+
+// Mobile button event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+    const btnDown = document.getElementById('btn-down');
+    const btnRotate = document.getElementById('btn-rotate');
+    
+    if (btnLeft) btnLeft.addEventListener('click', moveLeft);
+    if (btnRight) btnRight.addEventListener('click', moveRight);
+    if (btnDown) btnDown.addEventListener('click', moveDown);
+    if (btnRotate) btnRotate.addEventListener('click', rotateBlock);
+});
+
+// Handle window resize for responsive sizing
+window.addEventListener('resize', () => {
+    updateCellSize();
+    if (!gameOver) {
+        renderGrid();
+    }
+});
 
 // Initialize when the page loads
 window.addEventListener('DOMContentLoaded', () => {
